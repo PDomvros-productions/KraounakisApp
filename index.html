@@ -1,1 +1,261 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KraounakisApp</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', sans-serif;
+      background: linear-gradient(135deg, #ff4e50, #f9d423);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    button {
+      background: #ff0080;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      color: white;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fff;
+      transition: all 0.3s ease-in-out;
+    }
+
+    button:hover {
+      background: #c8005a;
+      transform: scale(1.05);
+    }
+
+    .emoji {
+      font-size: 2rem;
+    }
+
+    .question {
+      display: none;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    .question.active {
+      display: flex;
+    }
+
+    .options button {
+      margin: 0.5rem;
+      background: #4a90e2;
+      padding: 0.8rem;
+      border-radius: 20px;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    #result {
+      display: none;
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="emoji">🎭🎶💋</div>
+  <h1>KraounakisApp</h1>
+  <div class="intro">
+    Όλα αυτά που έχουμε ζήσει – τα μεγάλα και τα μυστικά, τα ξεκαρδιστικά και τα καταστροφικά – τα έχει ήδη γράψει ο Σταμάτης Κραουνάκης.<br /><br />
+    Μελοποίησε τις πληγές μας, στόλισε τις ενοχές μας, σφράγισε τις πιο δικές μας νύχτες με κόκκινα γυαλιά. 
+    <br /><br />
+    🎙️ Ήρθε η ώρα να ανακαλύψεις: Ποιο από τα τραγούδια του είσαι εσύ;
+  </div>
+  <div id="quiz">
+  <div id="question-container"></div>
+</div>
+    
+  </div>
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+  {
+    q: "Όταν περπατάς τη νύχτα μόνος/η, τι σκέφτεσαι πιο συχνά;",
+    options: ["Τις παλιές μου σχέσεις", "Σκηνές από ταινίες", "Να αλλάξω τον κόσμο", "Την ησυχία"]
+  },
+  {
+    q: "Τι σε πληγώνει περισσότερο σε μια σχέση;",
+    options: ["Η αδιαφορία", "Το να μη σε αφήνουν", "Η συνήθεια", "Το ψέμα"]
+  },
+  {
+    q: "Τι ρόλο παίζει το χιούμορ στη ζωή σου;",
+    options: ["Αμυντικός μηχανισμός", "Απόλυτη έκφραση", "Μέσο επικοινωνίας", "Δεν με εκφράζει ιδιαίτερα"]
+  },
+  {
+    q: "Όταν σε πνίγει η καθημερινότητα, τι κάνεις;",
+    options: ["Βάζω μουσική", "Βγαίνω έξω", "Σπάω τη ρουτίνα", "Κλείνομαι στον εαυτό μου"]
+  },
+  {
+    q: "Τι είναι για σένα η \"νύχτα\";",
+    options: ["Ρομαντισμός", "Περιπέτεια", "Ανατροπή", "Καταφύγιο"]
+  },
+  {
+    q: "Αν ήσουν ζώο, τι θα ήσουν;",
+    options: ["Γάτα", "Αλεπού", "Λιοντάρι", "Χελώνα"]
+  },
+  {
+    q: "Ποια φράση σε εκφράζει;",
+    options: ["Ό,τι αγαπάμε, μένει", "Σ' αυτή την πόλη ζούμε με φαντάσματα", "Δεν θα γίνω αυτό που θέλουν οι άλλοι", "Σιωπή = δύναμη"]
+  },
+  {
+    q: "Τι θέση έχει ο έρωτας στη ζωή σου;",
+    options: ["Είναι παντού", "Έρχεται στα απίθανα", "Είναι πεδίο μάχης", "Πηγή έμπνευσης"]
+  },
+  {
+    q: "Πώς αντιδράς σε έναν χωρισμό;",
+    options: ["Το κάνω τραγούδι", "Βγαίνω έξω και ξεχνιέμαι", "Φεύγω χωρίς λόγια", "Υποφέρω σιωπηλά"]
+  },
+  {
+    q: "Αν η ζωή ήταν σκηνή, ποιος ρόλος σου πάει;",
+    options: ["Ο ρομαντικός", "Ο κωμικός", "Ο ανατρεπτικός", "Ο σκηνοθέτης"]
+  },
+  {
+    q: "Τι κουβαλάς πάντα μαζί σου;",
+    options: ["Σημειωματάριο", "Αναπτηράκι", "Γυαλιά ηλίου", "Αναμνηστικό"]
+  },
+  {
+    q: "Πώς φαντάζεσαι τον εαυτό σου σε 20 χρόνια;",
+    options: ["Σε σπίτι με μουσική", "Σε ταξίδι", "Στην ίδια πόλη αλλιώς", "Δεν σκέφτομαι το μέλλον"]
+  },
+  {
+    q: "Τι σε ενοχλεί στην κοινωνία;",
+    options: ["Υποκρισία", "Έλλειψη φαντασίας", "Καταπίεση", "Αδιαφορία"]
+  },
+  {
+    q: "Αν ήσουν τραγούδι, τι είδος θα ήσουν;",
+    options: ["Μπαλάντα", "Ρεμπέτικο", "Καμπαρέ", "Θεατρικό"]
+  },
+  {
+    q: "Πώς αντιμετωπίζεις τη μοναξιά;",
+    options: ["Γράφω", "Παίζω μουσική", "Χορεύω", "Αφήνομαι"]
+  },
+  {
+    q: "Πώς δημιουργείς;",
+    options: ["Από εμπειρίες", "Από φαντασία", "Από πείσμα", "Από ανάγκη"]
+  },
+  {
+    q: "Τι θα έκανες αν ξυπνούσες και δεν σε ήξερε κανείς;",
+    options: ["Θα έγραφα μια μπαλάντα", "Θα ξεκινούσα από την αρχή", "Θα έκανα χαμό", "Θα απολάμβανα την ανωνυμία"]
+  },
+  {
+    q: "Ποιο τραγούδι θα ήθελες να παίζει στο φινάλε σου;",
+    options: ["Για ανεκπλήρωτους έρωτες", "Με χιούμορ και ειρωνεία", "Επικό και θεατρικό", "Λυρικό και ψίθυρος"]
+  },
+  {
+    q: "Ποια φιγούρα νιώθεις πως κρύβεις μέσα σου;",
+    options: ["Ντίβα του σινεμά", "Αλήτης με τσιγάρο", "Θεατρική περσόνα", "Νυχτερινό πλάσμα"]
+  },
+  {
+    q: "Ποιο αντικείμενο κρύβει για σένα συναίσθημα;",
+    options: ["Φωτογραφία", "Τσιγάρο", "Κοστούμι παράστασης", "Χάρτινο γράμμα"]
+  }
+];
+
+    let currentQuestion = 0;
+    let score = [0, 0, 0, 0];
+
+    const container = document.getElementById("question-container");
+    const resultDiv = document.getElementById("result");
+
+    function showQuestion() {
+      container.innerHTML = "";
+      const q = questions[currentQuestion];
+      const div = document.createElement("div");
+      div.className = "question active";
+      div.innerHTML = `<h2>${q.q}</h2>`;
+      const optDiv = document.createElement("div");
+      optDiv.className = "options";
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => {
+          score[i]++;
+          showNextQuestion();
+        };
+        optDiv.appendChild(btn);
+      });
+      div.appendChild(optDiv);
+      container.appendChild(div);
+    }
+
+    function showNextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      const max = score.indexOf(Math.max(...score));
+      const messages = [
+  "🩷 Ρομαντισμός και νύχτα γίνονται καταφύγιο. Το βλέμμα σου είναι γεμάτο μνήμες. 🎵 Τραγούδι: \"Αυτή η νύχτα μένει\"",
+  "🎭 Θέατρο, υπερβολή, χιούμορ και κρυφή τρυφερότητα. Ένας μικρός μονόλογος σε κάθε σου λέξη. 🎵 Τραγούδι: \"Η Λουζεριά\"",
+  "🔥 Πάθος, ελευθερία, έκρηξη. Η καρδιά σου χτυπά σε αλήθειες, όχι σε συμβάσεις. 🎵 Τραγούδι: \"Λήσταρχος Νταβέλης\"",
+  "😻 Μυστήριο, χάδι και φευγιό. Δεν σε αγγίζουν οι λέξεις, μόνο τα βλέμματα. 🎵 Τραγούδι: \"Η Γατούλα\""
+];
+      const links = [
+  {
+    spotify: "https://open.spotify.com/track/1PYRRt2YslMJtsSuYnp6Zu",
+    youtube: "https://www.youtube.com/watch?v=apeYukN9bvI"
+  },
+  {
+    spotify: "https://open.spotify.com/track/2v2UO1xFUw5yGoYuUIgFzZ",
+    youtube: "https://www.youtube.com/watch?v=cNhndF9OqvA"
+  },
+  {
+    spotify: "https://open.spotify.com/track/1vKFKyPRhEyDDzAekqvbH7",
+    youtube: "https://www.youtube.com/watch?v=P73vYDJ50t8"
+  },
+  {
+    spotify: "https://open.spotify.com/track/3GhE9Q02zOCHY3ekj4CjZg",
+    youtube: "https://www.youtube.com/watch?v=GTm9TAV2-rM"
+  }
+];
+      resultDiv.style.display = "block";
+      resultDiv.innerHTML = `
+  <p>${messages[max]}</p>
+  <a href="${links[max].spotify}" target="_blank">🎧 Άκου το στο Spotify</a><br><br>
+  <a href="${links[max].youtube}" target="_blank">📺 Άκου το στο YouTube</a>
+`;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
